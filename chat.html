@@ -8,11 +8,7 @@
 
 <!-- CHAT MARKUP -->
 <div class="example-chat l-demo-container">
-<<<<<<< HEAD
-  <header>ChatKitty</header>
-=======
   <header>What the Hell Just Happened?</header>
->>>>>>> origin/master
 
   <div class='example-chat-toolbar'>
     <label for="nameInput">Username:</label>
@@ -109,11 +105,7 @@
     //SCROLL TO BOTTOM OF MESSAGE LIST
     messageList[0].scrollTop = messageList[0].scrollHeight;
   });
-<<<<<<< HEAD
-
-=======
   
->>>>>>> origin/master
   // LISTENERS FOR KARMA BUTTONS
   var vote = function (element, delta) {
     console.log('karma buttons clicked');
@@ -125,7 +117,7 @@
     upvotesRef.on('value', function (snapshot) {
       whoUpvoted = snapshot.val();
       voted = voted || username in whoUpvoted;
-      console.log(whoUpvoted);
+      console.log(whoUpvoted); 
     });
     downvotesRef.on('value', function (snapshot) {
       whoDownvoted = snapshot.val();
@@ -134,31 +126,19 @@
     });
     // TODO: implement undo vote functionality using indexOf
     // FATAL ERROR: promise voted field would not be null
-<<<<<<< HEAD
-    while (voted==null) { console.log('Fetching stuff'); }
-=======
     //while (voted==null) { console.log('Fetching stuff'); }
->>>>>>> origin/master
     if (!voted) {
       console.log(delta + ' points to ' + element.id);
       if (delta===1) { // upvote
         upvotesRef.push(username);
         // console.log($('#karma_'+element.id));
-<<<<<<< HEAD
-        $('#karma_'+element.id).html(whoUpvoted.length-whoDownvoted.length+1);
-      } else { // downvote
-        downvotesRef.push(username);
-        // console.log($('#karma_'+element.id));
-        $('#karma_'+element.id).html(whoUpvoted.length-whoDownvoted.length-1);
-=======
         try {$('#karma_'+element.id).html(Object.keys(whoUpvoted).length-Object.keys(whoDownvoted).length);}
-		catch (e){ $('#karma_'+element.id).html("-");}
+    catch (e){ $('#karma_'+element.id).html("-");}
       } else { // downvote
         downvotesRef.push(username);
         // console.log($('#karma_'+element.id));
         try {$('#karma_'+element.id).html(Object.keys(whoUpvoted).length-Object.keys(whoDownvoted).length);}
-		catch (e){ $('#karma_'+element.id).html("-");}
->>>>>>> origin/master
+    catch (e){ $('#karma_'+element.id).html("-");}
       }
     }
   };
