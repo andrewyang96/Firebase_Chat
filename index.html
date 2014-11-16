@@ -58,9 +58,13 @@
     //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
     var messageElement = $("<li>");
     var nameElement = $("<strong class='example-chat-username'></strong>");
-    var karmaElement = $("<span style='float:right'><strong class='chat-karma'></strong></span>");
+    var upvoteElement = $("<strong style='float:right'></strong>").text('+');
+    var downvoteElement = $("<strong style='float:right'></strong>").text('-');
+    var karmaElement = $("<strong style='float:right' class='chat-karma'></strong>");
     nameElement.text(username);
     messageElement.text(message).prepend(nameElement).append(karmaElement.text(karma));
+    messageElement.append(upvoteElement);
+    messageElement.prepend(downvoteElement);
     
     //EDIT KARMA'S COLOR BASED ON VALUE
     karmaElement.css("color", "blue");
