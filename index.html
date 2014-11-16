@@ -15,17 +15,26 @@
     <input type='text' id='nameInput' placeholder='enter a username...'>
   </div>
 
+
   <div style="overflow:auto;">
     <ul id='example-messages' class="example-chat-messages"></ul>
       <!--<td>
+=======
+  <table width="100%" height="auto">
+    <col style="width:90%">
+    <col style="width:10%">
+    <tbody><tr>
+      <td>
+        <ul id='example-messages' class="example-chat-messages"></ul>
+      </td>
+      <td>
+>>>>>>> origin/master
         <ul id='karma' class="chat-karma"></ul>
       </td> -->
-  </table>
 
   <footer>
     <input type='text' id='messageInput'  placeholder='Type a message...'>
   </footer>
-  </div>
 </div>
 
 <!-- CHAT JAVACRIPT -->
@@ -63,7 +72,7 @@
     //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
     var messageElement = $("<li>");
     var nameElement = $("<strong class='example-chat-username'></strong>");
-    var karmaElement = $("<li><strong class='chat-karma'></strong></li>");
+    var karmaElement = $("<span style='float:right'><strong class='chat-karma'></strong></span>");
     nameElement.text(username);
     messageElement.text(message).prepend(nameElement).append(karmaElement.text(karma));
     
@@ -72,7 +81,7 @@
     karmaElement.css("font-weight", "bold");
 
     //ADD MESSAGE
-    messageList.append(messageElement);
+    messageList.append(messageElement); 
     karmaList.append(karmaElement);
 
     //SCROLL TO BOTTOM OF MESSAGE LIST
