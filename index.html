@@ -34,7 +34,7 @@
 
   // LISTEN FOR USERNAMEREF ARRAY CALL
   usernamesRef.on('value', function (snapshot) {
-    if (sessionStorage.getItem("username")) {
+    if (sessionStorage.getItem("username")) { // if cookies exist, then use them
       username = sessionStorage.getItem("username");
     } else {
       var listOfNames = snapshot.val();
@@ -63,26 +63,32 @@
 
       //SAVE DATA TO FIREBASE AND EMPTY FIELD
       while (username==null) { console.log("Stopping program until username is received."); }
-      if (message) messagesRef.push({name:username, text:message, karma:0}); // ignore if empty
+      if (message) messagesRef.push({name:username, text:message, karma:0, usersUpvoted:[username], usersDownvoted:[username]}); // ignore if empty
       // TODO: add cuss word filter
       messageField.val('');
     }
   });
 
+  // object of posts
+  var posts = {};
+
   // Add a callback that is triggered for each chat message.
-  messagesRef.limit(20).on('child_added', function (snapshot) {
+  messagesRef.limit(50).on('child_added', function (snapshot) {
     //GET DATA
     var data = snapshot.val();
     var username = data.name || "anonymous";
     var message = data.text;
     var karma = data.karma;
+    var id = snapshot.name();
+    posts[id] = data;
 
     //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
     var messageElement = $("<li>");
     var nameElement = $("<strong class='example-chat-username'></strong>");
-    var upvoteElement = $("<strong style='float:right'></strong>").text('+');
-    var downvoteElement = $("<strong style='float:right'></strong>").text('-');
-    var karmaElement = $("<strong style='float:right' class='chat-karma'></strong>");
+    var upvoteElement = $("<strong style='float:right' onclick='vote(this,1);' id='"+id+"'></strong>").text('+');
+    var downvoteElement = $("<strong style='float:right' onclick='vote(this,-1);' id='"+id+"'></strong>").text('-');
+    var karmaElement = $("<strong style='float:right' class='chat-karma' id='karma_"+id+"'></strong>");
+
     nameElement.text(username);
     messageElement.text(message).prepend(nameElement).append(karmaElement.text(karma));
     messageElement.append(upvoteElement);
@@ -99,6 +105,42 @@
     //SCROLL TO BOTTOM OF MESSAGE LIST
     messageList[0].scrollTop = messageList[0].scrollHeight;
   });
+
+  // LISTENERS FOR KARMA BUTTONS
+  var vote = function (element, delta) {
+    console.log('karma buttons clicked');
+    var upvotesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages/'+element.id+'/usersUpvoted');
+    var downvotesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages/'+element.id+'/usersDownvoted');
+    var whoUpvoted = null;
+    var whoDownvoted = null;
+    var voted = null;
+    upvotesRef.on('value', function (snapshot) {
+      whoUpvoted = snapshot.val();
+      voted = voted || username in whoUpvoted;
+      console.log(whoUpvoted);
+    });
+    downvotesRef.on('value', function (snapshot) {
+      whoDownvoted = snapshot.val();
+      voted = voted || username in whoDownvoted;
+      console.log(whoDownvoted);
+    });
+    // TODO: implement undo vote functionality using indexOf
+    // FATAL ERROR: promise voted field would not be null
+    while (voted==null) { console.log('Fetching stuff'); }
+    if (!voted) {
+      console.log(delta + ' points to ' + element.id);
+      if (delta===1) { // upvote
+        upvotesRef.push(username);
+        // console.log($('#karma_'+element.id));
+        $('#karma_'+element.id).html(whoUpvoted.length-whoDownvoted.length+1);
+      } else { // downvote
+        downvotesRef.push(username);
+        // console.log($('#karma_'+element.id));
+        $('#karma_'+element.id).html(whoUpvoted.length-whoDownvoted.length-1);
+      }
+    }
+  };
+  
 </script>
 </body>
 </html>
