@@ -6,7 +6,7 @@
   display: none; }
 
 .l-demo-container {
-  width: 500px;
+  width: 95%; /* Control chat container width */
   margin: 40px auto 0px auto; }
 
 .l-popout {
