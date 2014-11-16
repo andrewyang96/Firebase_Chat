@@ -66,7 +66,10 @@
     var karmaElement = $("<li><strong class='chat-karma'></strong></li>");
     nameElement.text(username);
     messageElement.text(message).prepend(nameElement).append(karmaElement.text(karma));
-    //messageElement.text().append(karmaElement.text(karma));
+    
+    //EDIT KARMA'S COLOR BASED ON VALUE
+    karmaElement.css("color", "blue");
+    karmaElement.css("font-weight", "bold");
 
     //ADD MESSAGE
     messageList.append(messageElement);
