@@ -1,6 +1,6 @@
 {
   "firebase": "resplendent-torch-7666",
-  "public": ".",
+  "public": "./",
   "ignore": [
     "firebase.json",
     "**/.*",
