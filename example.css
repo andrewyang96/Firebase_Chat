@@ -90,7 +90,8 @@
     overflow: auto; }
     .example-chat ul li {
       margin-bottom: 10px;
-      line-height: 24px; }
+      line-height: 24px;
+      word-wrap: break-word; }
       .example-chat ul li:last-child {
         margin: 0px; }
     .example-chat ul .example-chat-username {
