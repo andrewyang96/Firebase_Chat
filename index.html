@@ -20,7 +20,7 @@
 
 .soft-blur-overlay{
 	-webkit-filter: blur(4px);}
-.classname {
+#gobutton {
 	-moz-box-shadow:inset -2px 3px 0px 0px #fbafe3;
 	-webkit-box-shadow:inset -2px 3px 0px 0px #fbafe3;
 	box-shadow:inset -2px 3px 0px 0px #fbafe3;
@@ -54,15 +54,14 @@
 	text-decoration:none;
 	text-align:center;
 	text-shadow:1px 1px 0px #750b44;
-	 position: fixed;
-     top: 60%;
-     left: 47%;
-     z-index: 400;
-     opacity: 0.85;
-     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
-     font-size: 20px;
+	position: absolute;
+    top: 60%;
+    z-index: 400;
+    opacity: 0.85;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    font-size: 20px;
 }
-.classname:hover {
+#gobutton:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ef027d), color-stop(1, #ff5bb0) );
 	background:-moz-linear-gradient( center top, #ef027d 5%, #ff5bb0 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ef027d', endColorstr='#ff5bb0');
@@ -104,10 +103,13 @@
 }
 
 </style>
-<a href="chat.html" class="classname">GO</a>
+<a href="chat.html" id="gobutton">GO</a>
 <div class="tab">
 	Welcome to ChatKitty
 </div>
 <input type="text"class="inputs" placeholder="Enter Class ID Here"> </input>
-
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script>
+$("#gobutton").css("left",($(window).width()-$("#gobutton").width())*0.5+'px');
+</script>
 </head>
