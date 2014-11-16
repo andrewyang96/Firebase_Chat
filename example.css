@@ -82,11 +82,14 @@
       .example-chat .example-chat-toolbar input:active, .example-chat .example-chat-toolbar input:focus {
         color: #1d9dff;
         border: 1px solid #FFF; }
+  .example-chat table {
+    overflow: auto;
+  }
   .example-chat ul {
     list-style: none;
     margin: 0px;
     padding: 20px;
-    height: 200px;
+    height: 70%; /* control height of window */
     overflow: auto; }
     .example-chat ul li {
       margin-bottom: 10px;

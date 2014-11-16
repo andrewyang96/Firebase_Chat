@@ -15,22 +15,36 @@
     <input type='text' id='nameInput' placeholder='enter a username...'>
   </div>
 
-  <ul id='example-messages' class="example-chat-messages"></ul>
+  <div style="overflow:auto;">
+  <table width="100%">
+    <col style="width:90%">
+    <col style="width:10%">
+    <tbody><tr>
+      <td>
+        <ul id='example-messages' class="example-chat-messages"></ul>
+      </td>
+      <td>
+        <ul id='karma' class="chat-karma"></ul>
+      </td>
+    </tr></tbody>
+  </table>
 
   <footer>
     <input type='text' id='messageInput'  placeholder='Type a message...'>
   </footer>
+  </div>
 </div>
 
 <!-- CHAT JAVACRIPT -->
 <script>
   // CREATE A REFERENCE TO FIREBASE
-  var messagesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/');
+  var messagesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages');
 
   // REGISTER DOM ELEMENTS
   var messageField = $('#messageInput');
   var nameField = $('#nameInput');
   var messageList = $('#example-messages');
+  var karmaList = $('#karma');
 
   // LISTEN FOR KEYPRESS EVENT
   messageField.keypress(function (e) {
@@ -56,14 +70,14 @@
     //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
     var messageElement = $("<li>");
     var nameElement = $("<strong class='example-chat-username'></strong>")
-    var karmaElement = $("<strong style=\"clear:left\"></strong>");
+    var karmaElement = $("<li><strong class='chat-karma'></strong></li>");
     nameElement.text(username);
     messageElement.text(message).prepend(nameElement);
     karmaElement.text(karma);
-    messageElement.append(karmaElement);
 
     //ADD MESSAGE
-    messageList.append(messageElement)
+    messageList.append(messageElement);
+    karmaList.append(karmaElement);
 
     //SCROLL TO BOTTOM OF MESSAGE LIST
     messageList[0].scrollTop = messageList[0].scrollHeight;
