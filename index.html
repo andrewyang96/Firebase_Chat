@@ -27,6 +27,25 @@
 <script>
   // CREATE A REFERENCE TO FIREBASE
   var messagesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages');
+  var usernamesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/usernames');
+  console.log("Firebase references created.");
+
+  var username = null;
+
+  // LISTEN FOR USERNAMEREF ARRAY CALL
+  usernamesRef.on('value', function (snapshot) {
+    if (sessionStorage.getItem("username")) {
+      username = sessionStorage.getItem("username");
+    } else {
+      var listOfNames = snapshot.val();
+      username = listOfNames[Math.floor(Math.random()*listOfNames.length)] + Math.floor(Math.random()*9) + Math.floor(Math.random()*9);
+      sessionStorage.setItem("username", username);
+    }
+    $("#nameInput").attr("placeholder", username);
+    console.log("Your username is " + username);
+  }, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+  });
 
   // REGISTER DOM ELEMENTS
   var messageField = $('#messageInput');
@@ -34,15 +53,18 @@
   var messageList = $('#example-messages');
   var karmaList = $('#karma');
 
+
   // LISTEN FOR KEYPRESS EVENT
   messageField.keypress(function (e) {
     if (e.keyCode == 13) {
       //FIELD VALUES
-      var username = nameField.val();
+      //var username = nameField.val();
       var message = messageField.val();
 
       //SAVE DATA TO FIREBASE AND EMPTY FIELD
+      while (username==null) { console.log("Stopping program until username is received."); }
       if (message) messagesRef.push({name:username, text:message, karma:0}); // ignore if empty
+      // TODO: add cuss word filter
       messageField.val('');
     }
   });
