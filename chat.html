@@ -1,0 +1,148 @@
+<html>
+<head>
+  <script src="https://cdn.firebase.com/js/client/1.1.1/firebase.js"></script>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+  <link rel="stylesheet" type="text/css" href="example.css">
+</head>
+<body>
+
+<!-- CHAT MARKUP -->
+<div class="example-chat l-demo-container">
+  <header>What the Hell Just Happened?</header>
+
+  <div class='example-chat-toolbar'>
+    <label for="nameInput">Username:</label>
+    <input type='text' id='nameInput' placeholder='enter a username...'>
+  </div>
+
+
+  <ul id='example-messages' class="example-chat-messages"></ul>
+
+  <footer>
+    <input type='text' id='messageInput'  placeholder='Type a message...'>
+  </footer>
+</div>
+
+<!-- CHAT JAVACRIPT -->
+<script>
+  // CREATE A REFERENCE TO FIREBASE
+  var messagesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages');
+  var usernamesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/usernames');
+  console.log("Firebase references created.");
+
+  var username = null;
+
+  // LISTEN FOR USERNAMEREF ARRAY CALL
+  usernamesRef.on('value', function (snapshot) {
+    if (sessionStorage.getItem("username")) { // if cookies exist, then use them
+      username = sessionStorage.getItem("username");
+    } else {
+      var listOfNames = snapshot.val();
+      username = listOfNames[Math.floor(Math.random()*listOfNames.length)] + Math.floor(Math.random()*9) + Math.floor(Math.random()*9);
+      sessionStorage.setItem("username", username);
+    }
+    $("#nameInput").attr("placeholder", username);
+    console.log("Your username is " + username);
+  }, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+  });
+
+  // REGISTER DOM ELEMENTS
+  var messageField = $('#messageInput');
+  var nameField = $('#nameInput');
+  var messageList = $('#example-messages');
+  var karmaList = $('#karma');
+
+
+  // LISTEN FOR KEYPRESS EVENT
+  messageField.keypress(function (e) {
+    if (e.keyCode == 13) {
+      //FIELD VALUES
+      //var username = nameField.val();
+      var message = messageField.val();
+
+      //SAVE DATA TO FIREBASE AND EMPTY FIELD
+      while (username==null) { console.log("Stopping program until username is received."); }
+      if (message) messagesRef.push({name:username, text:message, karma:0, usersUpvoted:[username], usersDownvoted:[username]}); // ignore if empty
+      // TODO: add cuss word filter
+      messageField.val('');
+    }
+  });
+
+  // object of posts
+  var posts = {};
+
+  // Add a callback that is triggered for each chat message.
+  messagesRef.limit(50).on('child_added', function (snapshot) {
+    //GET DATA
+    var data = snapshot.val();
+    var username = data.name || "anonymous";
+    var message = data.text;
+    var karma = data.karma;
+    var id = snapshot.name();
+    posts[id] = data;
+
+    //CREATE ELEMENTS MESSAGE & SANITIZE TEXT
+    var messageElement = $("<li>");
+    var nameElement = $("<strong class='example-chat-username'></strong>");
+    var upvoteElement = $("<strong style='float:right' onclick='vote(this,1);' id='"+id+"'></strong>").text('+');
+    var downvoteElement = $("<strong style='float:right' onclick='vote(this,-1);' id='"+id+"'></strong>").text('-');
+    var karmaElement = $("<strong style='float:right' class='chat-karma' id='karma_"+id+"'></strong>");
+
+    nameElement.text(username);
+    messageElement.text(message).prepend(nameElement).append(karmaElement.text(karma));
+    messageElement.append(upvoteElement);
+    messageElement.prepend(downvoteElement);
+    
+    //EDIT KARMA'S COLOR BASED ON VALUE
+    karmaElement.css("color", "blue");
+    karmaElement.css("font-weight", "bold");
+
+    //ADD MESSAGE
+    messageList.append(messageElement); 
+    karmaList.append(karmaElement);
+
+    //SCROLL TO BOTTOM OF MESSAGE LIST
+    messageList[0].scrollTop = messageList[0].scrollHeight;
+  });
+  
+  // LISTENERS FOR KARMA BUTTONS
+  var vote = function (element, delta) {
+    console.log('karma buttons clicked');
+    var upvotesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages/'+element.id+'/usersUpvoted');
+    var downvotesRef = new Firebase('https://resplendent-torch-7666.firebaseio.com/messages/'+element.id+'/usersDownvoted');
+    var whoUpvoted = null;
+    var whoDownvoted = null;
+    var voted = null;
+    upvotesRef.on('value', function (snapshot) {
+      whoUpvoted = snapshot.val();
+      voted = voted || username in whoUpvoted;
+      console.log(whoUpvoted);
+    });
+    downvotesRef.on('value', function (snapshot) {
+      whoDownvoted = snapshot.val();
+      voted = voted || username in whoDownvoted;
+      console.log(whoDownvoted);
+    });
+    // TODO: implement undo vote functionality using indexOf
+    // FATAL ERROR: promise voted field would not be null
+    //while (voted==null) { console.log('Fetching stuff'); }
+    if (!voted) {
+      console.log(delta + ' points to ' + element.id);
+      if (delta===1) { // upvote
+        upvotesRef.push(username);
+        // console.log($('#karma_'+element.id));
+        try {$('#karma_'+element.id).html(Object.keys(whoUpvoted).length-Object.keys(whoDownvoted).length);}
+		catch (e){ $('#karma_'+element.id).html("-");}
+      } else { // downvote
+        downvotesRef.push(username);
+        // console.log($('#karma_'+element.id));
+        try {$('#karma_'+element.id).html(Object.keys(whoUpvoted).length-Object.keys(whoDownvoted).length);}
+		catch (e){ $('#karma_'+element.id).html("-");}
+      }
+    }
+  };
+  
+</script>
+</body>
+</html>
